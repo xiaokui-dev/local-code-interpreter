@@ -1,12 +1,6 @@
-from langchain.schema import HumanMessage
 from langchain.pydantic_v1 import BaseModel
-from langchain.schema import AIMessage
+from langchain.schema import HumanMessage, AIMessage
 from loguru import logger
-
-
-class CodeToolRequest(BaseModel):
-    code: str
-    description = "The code to execute"
 
 
 class File(BaseModel):

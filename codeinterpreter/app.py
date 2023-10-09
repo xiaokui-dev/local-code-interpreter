@@ -11,7 +11,7 @@ from codeinterpreter.db_manager import DBManager
 ci = CodeInterpreter()
 db = DBManager()
 
-file_path = os.path.join(os.environ.get('HOME'), "file")
+file_path = os.path.join(os.environ.get('HOME'), "jupyter_file")
 
 
 def main():

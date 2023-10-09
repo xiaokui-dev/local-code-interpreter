@@ -22,7 +22,7 @@ from websockets.sync.client import connect as ws_connect_sync
 from pydantic import BaseModel
 from loguru import logger
 
-file_path = os.path.join(os.environ.get('HOME'), "file")
+jupyter_file_path = os.path.join(os.environ.get('HOME'), "jupyter_file")
 
 
 def _check_installed() -> None:
@@ -48,15 +48,15 @@ class FileOutput(BaseModel):
 
 
 def upload(file_name: str, content: bytes):
-    os.makedirs(file_path, exist_ok=True)
-    with open(os.path.join(file_path, file_name), "wb") as f:
+    os.makedirs(jupyter_file_path, exist_ok=True)
+    with open(os.path.join(jupyter_file_path, file_name), "wb") as f:
         f.write(content)
 
     return f"{file_name} uploaded successfully"
 
 
 def download(file_name: str) -> FileOutput:
-    with open(os.path.join(file_path, file_name), "rb") as f:
+    with open(os.path.join(jupyter_file_path, file_name), "rb") as f:
         content = f.read()
 
     return FileOutput(name=file_name, content=content)
@@ -75,7 +75,7 @@ class LocalBox(ABC):
 
     def start(self):
         self.session_id = uuid4()
-        os.makedirs(file_path, exist_ok=True)
+        os.makedirs(jupyter_file_path, exist_ok=True)
         self._check_port()
         logger.info("Starting kernel...")
         out = subprocess.PIPE
@@ -93,7 +93,7 @@ class LocalBox(ABC):
                 ],
                 stdout=out,
                 stderr=out,
-                cwd=file_path,
+                cwd=jupyter_file_path,
             )
             self._jupyter_pids.append(self.jupyter.pid)
         except FileNotFoundError:

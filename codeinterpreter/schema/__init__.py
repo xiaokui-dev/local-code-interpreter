@@ -1,7 +1,6 @@
-from .schema import UserRequest, File, CodeToolRequest, AIResponse
+from .schema import UserRequest, File, AIResponse
 
 __all__ = [
-    "CodeToolRequest",
     "UserRequest",
     "File",
     "AIResponse"

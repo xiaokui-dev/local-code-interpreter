@@ -1,5 +1,3 @@
 # Local Code Interpreter
-Python code interpreter provider implemented using OpenAI API key, with LangChain
+Local Code Interpreter implemented using OpenAI API key, with [LangChain](https://github.com/langchain-ai/langchain)
 
-# Code Interpreter Provider
-Python code interpreter provider implemented using OpenAI API key, with LangChain
