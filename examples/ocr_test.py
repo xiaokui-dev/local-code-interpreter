@@ -7,7 +7,7 @@ def main():
     ci = CodeInterpreter()
     user_request = "ocr an image for me and generate a text file."
 
-    file = File.from_path(os.path.join(os.environ.get('HOME'), "Desktop/F0gzvXFagAEJ5AZ.jpeg"))
+    file = File.from_path(os.path.join(os.environ.get('HOME'), "Desktop/codeinterpreter/files/F0gzvXFagAEJ5AZ.jpeg"))
 
     response = ci.generate_response(user_request, file=file)
 

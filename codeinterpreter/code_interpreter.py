@@ -9,7 +9,7 @@ from langchain.agents import BaseSingleActionAgent, AgentExecutor
 from langchain.tools import BaseTool
 
 from codeinterpreter.chains import remove_download_link, get_file_modifications
-from codeinterpreter.agents import CustomFunctionsAgent
+from codeinterpreter.agents import CustomOpenAIFunctionsAgent
 from codeinterpreter.prompts import system_message
 from codeinterpreter.schema import File, AIResponse, UserRequest
 from codeinterpreter.custom_llm import CustomChatOpenAI
@@ -25,7 +25,12 @@ class CodeInterpreterInput(BaseModel):
 
 class CodeInterpreterTool(BaseTool):
     name = "python"
-    description = "Executes code on the user's machine and returns the output"
+    description = """
+                Input a string of code to a ipython interpreter.
+                Write the entire code in a single string. This string can
+                be really long, so you can use the `;` character to split lines.
+                Variables are preserved between runs. 
+                """
     args_schema: Type[BaseModel] = CodeInterpreterInput
 
     def _run(self, code: str):
@@ -55,7 +60,7 @@ class CodeInterpreter:
         )
 
     def agent(self) -> BaseSingleActionAgent:
-        return CustomFunctionsAgent.from_llm_and_tools(
+        return CustomOpenAIFunctionsAgent.from_llm_and_tools(
             llm=self.llm,
             tools=[CodeInterpreterTool()],
             system_message=system_message

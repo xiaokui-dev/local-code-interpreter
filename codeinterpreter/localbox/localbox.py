@@ -12,7 +12,6 @@ from typing import List, Optional, Union
 from uuid import uuid4
 from abc import ABC
 from uuid import UUID
-import aiohttp
 import requests
 from websockets.client import WebSocketClientProtocol
 from websockets.exceptions import ConnectionClosedError
@@ -71,7 +70,6 @@ class LocalBox(ABC):
         self.kernel_id: Optional[dict] = None
         self.ws: Union[WebSocketClientProtocol, ClientConnection, None] = None
         self.jupyter: Union[Process, subprocess.Popen, None] = None
-        self.aiohttp_session: Optional[aiohttp.ClientSession] = None
 
     def start(self):
         self.session_id = uuid4()
@@ -281,11 +279,3 @@ class LocalBox(ABC):
     @property
     def ws_url(self) -> str:
         return f"ws://localhost:{self.port}/api"
-
-    def __del__(self):
-        self.stop()
-
-        if self.aiohttp_session is not None:
-            loop = asyncio.new_event_loop()
-            loop.run_until_complete(self.aiohttp_session.close())
-            self.aiohttp_session = None
