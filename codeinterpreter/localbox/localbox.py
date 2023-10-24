@@ -21,7 +21,7 @@ from websockets.sync.client import connect as ws_connect_sync
 from pydantic import BaseModel
 from loguru import logger
 
-jupyter_file_path = os.path.join(os.environ.get('HOME'), "jupyter_file")
+jupyter_file_path = os.path.join(os.environ.get('HOME'), "Desktop/codeinterpreter/jupyter_file")
 
 
 def _check_installed() -> None:
@@ -59,6 +59,13 @@ def download(file_name: str) -> FileOutput:
         content = f.read()
 
     return FileOutput(name=file_name, content=content)
+
+
+def list_files() -> List[FileOutput]:
+    return [
+        FileOutput(name=file_name, content=None)
+        for file_name in os.listdir(jupyter_file_path)
+    ]
 
 
 class LocalBox(ABC):

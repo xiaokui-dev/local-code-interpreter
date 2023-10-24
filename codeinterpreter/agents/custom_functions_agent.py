@@ -118,13 +118,13 @@ class CustomOpenAIFunctionsAgent(BaseSingleActionAgent):
         """Get allowed tools."""
         return list([t.name for t in self.tools])
 
-    @root_validator
+    @root_validator(allow_reuse=True)
     def validate_llm(cls, values: dict) -> dict:
         if not isinstance(values["llm"], ChatOpenAI):
             raise ValueError("Only supported with ChatOpenAI models.")
         return values
 
-    @root_validator
+    @root_validator(allow_reuse=True)
     def validate_prompt(cls, values: dict) -> dict:
         prompt: BasePromptTemplate = values["prompt"]
         if "agent_scratchpad" not in prompt.input_variables:
