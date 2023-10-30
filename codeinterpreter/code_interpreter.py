@@ -1,14 +1,12 @@
-import base64
 import re
 from io import BytesIO
-from uuid import uuid4
 from loguru import logger
 from typing import Type
 
 from langchain.agents import BaseSingleActionAgent, AgentExecutor
 from langchain.tools import BaseTool
 
-from codeinterpreter.chains import remove_download_link, get_file_modifications
+from codeinterpreter.chains import get_file_modifications
 from codeinterpreter.agents import CustomOpenAIFunctionsAgent
 from codeinterpreter.prompts import system_message
 from codeinterpreter.schema import File, AIResponse, UserRequest
@@ -76,13 +74,6 @@ class CodeInterpreter:
         if not isinstance(output.content, str):
             raise TypeError("Expected output.content to be a string.")
 
-        if output.type == "image/png":
-            filename = f"image-{uuid4()}.png"
-            file_buffer = BytesIO(base64.b64decode(output.content))
-            file_buffer.name = filename
-            self.output_files.append(File(name=filename, content=file_buffer.read()))
-            return f"Image {filename} got send to the user."
-
         elif output.type == "error":
             if "ModuleNotFoundError" in output.content:
                 if package := re.search(
@@ -97,7 +88,7 @@ class CodeInterpreter:
             else:
                 pass
 
-        elif modifications := get_file_modifications(code, self.llm):
+        if modifications := get_file_modifications(code, self.llm):
             for filename in modifications:
                 file_out = download(filename)
                 if not file_out.content:
@@ -137,19 +128,7 @@ class CodeInterpreter:
         request.content += "**File(s) are now available in the cwd. **\n"
 
     def _output_handler(self, final_response: str):
-        for file in self.output_files:
-            if str(file.name) in final_response:
-                final_response = re.sub(r"\n\n!\[.*\]\(.*\)", "", final_response)
-
-        if self.output_files and re.search(r"\n\[.*\]\(.*\)", final_response):
-            try:
-                final_response = remove_download_link(final_response, self.llm)
-            except Exception as e:
-                if self.verbose:
-                    print("Error while removing download links:", e)
 
         output_files = self.output_files
-        self.output_files = []
-        self.code_log = []
 
         return AIResponse(content=final_response, files=output_files)

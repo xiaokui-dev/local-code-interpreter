@@ -21,7 +21,7 @@ from websockets.sync.client import connect as ws_connect_sync
 from pydantic import BaseModel
 from loguru import logger
 
-jupyter_file_path = os.path.join(os.environ.get('HOME'), "Desktop/codeinterpreter/jupyter_file")
+jupyter_file_path = os.path.join(os.environ.get('HOME'), "Desktop/codeinterpreter/jupyter_files")
 
 
 def _check_installed() -> None:
@@ -243,7 +243,7 @@ class LocalBox(ABC):
                 if "image/png" in received_msg["content"]["data"]:
                     return CodeBoxOutput(
                         type="image/png",
-                        content=received_msg["content"]["data"]["image/png"],
+                        content="",
                     )
                 if "text/plain" in received_msg["content"]["data"]:
                     return CodeBoxOutput(
@@ -286,3 +286,5 @@ class LocalBox(ABC):
     @property
     def ws_url(self) -> str:
         return f"ws://localhost:{self.port}/api"
+
+
